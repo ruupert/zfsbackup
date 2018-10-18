@@ -1,0 +1,37 @@
+#!/usr/local/bin/expect -f
+puts "Waking up AYMD"
+
+log_user 0
+
+
+while (true) {
+    sleep 5
+    spawn ping -c 2 -i 3 -W 1 10.0.0.15
+
+    expect {
+        " 0.0%" {break}
+        " 100.0%" {
+	    puts "No ping yet."
+	    continue
+	}
+    }
+
+
+}
+
+set timeout 5
+while (true) {
+    sleep 2
+    spawn ssh ruupert@10.0.0.15
+    
+    expect {
+	timeout {
+	    puts "Connection timed out."
+	    continue
+	}
+	"Password for ruupert@fantti:" {
+	    break
+	}
+    }
+}
+puts "SSH up"
